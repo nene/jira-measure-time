@@ -20,6 +20,11 @@ $(function(){
             delete this.data.startTime;
             this.save();
         },
+        reset: function() {
+            delete this.data.startTime;
+            delete this.data.duration;
+            this.cleanup();
+        },
 
         getStartTime: function() {
             return this.data.startTime;
@@ -48,6 +53,9 @@ $(function(){
             catch (e) {
                 this.data = {};
             }
+        },
+        cleanup: function() {
+            delete localStorage[this.id];
         }
     };
 
@@ -57,12 +65,9 @@ $(function(){
         "<style>" +
         ".jmt-start { color: green; }" +
         ".jmt-stop { color: red; }" +
-        ".jmt-duration { padding-left: 1em; }" +
+        ".jmt-duration { padding: 0 1em; }" +
         "</style>"
     );
-
-    var startTime;
-    var totalDuration = 0;
 
     var startBtn = $("<button class='jmt-start'>Start</button>");
     startBtn.on("click", function(){
@@ -77,6 +82,13 @@ $(function(){
         displayDuration(timeTracker.getDuration());
     });
 
+    var resetBtn = $("<button class='jmt-reset'>Reset</button>");
+    resetBtn.on("click", function(){
+        timeTracker.reset();
+        updateButtonsVisibility();
+        displayDuration(timeTracker.getDuration());
+    });
+
     var durationLabel = $("<span class='jmt-duration'></span>");
     displayDuration(timeTracker.getRunningDuration());
 
@@ -85,6 +97,7 @@ $(function(){
     toolbar.append(startBtn);
     toolbar.append(stopBtn);
     toolbar.append(durationLabel);
+    toolbar.append(resetBtn);
 
     setInterval(function(){
         if (timeTracker.isRunning()) {
