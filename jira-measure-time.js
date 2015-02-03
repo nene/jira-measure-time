@@ -30,8 +30,8 @@ $(function(){
         stopBtn.hide();
         startBtn.show();
 
-        totalDuration += new Date() - startTime;
-        durationLabel.text(formatDuration(totalDuration));
+        totalDuration = getTotalDuration();
+        displayDuration(totalDuration);
         startTime = undefined;
     });
     stopBtn.hide();
@@ -44,9 +44,17 @@ $(function(){
 
     setInterval(function(){
         if (startTime) {
-            durationLabel.text(formatDuration(totalDuration + (new Date() - startTime)));
+            displayDuration(getTotalDuration());
         }
     }, 250);
+
+    function getTotalDuration() {
+        return totalDuration + (new Date() - startTime);
+    }
+
+    function displayDuration(ms) {
+        durationLabel.text(formatDuration(ms));
+    }
 
     function formatDuration(ms) {
         var s = Math.floor(ms / 1000);
