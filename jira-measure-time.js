@@ -59,15 +59,16 @@ $(function(){
         }
     };
 
-    var timeTracker = new TimeTracker(extractIssueNr(document.location.href));
-
     $("head").append(
         "<style>" +
+        ".jmt-label { padding-right: 1em; }" +
         ".jmt-start { color: green; }" +
         ".jmt-stop { color: red; }" +
         ".jmt-duration { padding: 0 1em; }" +
         "</style>"
     );
+
+    var timeTracker = new TimeTracker(extractIssueNr(document.location.href));
 
     var startBtn = $("<button class='jmt-start'>Start</button>");
     startBtn.on("click", function(){
@@ -82,7 +83,7 @@ $(function(){
         displayDuration(timeTracker.getDuration());
     });
 
-    var resetBtn = $("<button class='jmt-reset'>Reset</button>");
+    var resetBtn = $("<button class='jmt-reset'>x</button>");
     resetBtn.on("click", function(){
         timeTracker.reset();
         updateButtonsVisibility();
@@ -94,6 +95,7 @@ $(function(){
 
     updateButtonsVisibility();
 
+    toolbar.append("<span class='jmt-label'>Time tracking:</span>");
     toolbar.append(startBtn);
     toolbar.append(stopBtn);
     toolbar.append(durationLabel);
