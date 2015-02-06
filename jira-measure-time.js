@@ -1,8 +1,8 @@
 "use strict";
 
 $(function(){
-    var toolbar = $("#opsbar-opsbar-transitions").parent();
-    if (!toolbar.length) {
+    var header = $(".aui-page-header-main");
+    if (!header.length) {
         return;
     }
 
@@ -95,11 +95,11 @@ $(function(){
 
     updateButtonsVisibility();
 
-    toolbar.append("<span class='jmt-label'>Time tracking:</span>");
-    toolbar.append(startBtn);
-    toolbar.append(stopBtn);
-    toolbar.append(durationLabel);
-    toolbar.append(resetBtn);
+    header.append("<span class='jmt-label'>Time tracking:</span>");
+    header.append(startBtn);
+    header.append(stopBtn);
+    header.append(durationLabel);
+    header.append(resetBtn);
 
     setInterval(function(){
         if (timeTracker.isRunning()) {
