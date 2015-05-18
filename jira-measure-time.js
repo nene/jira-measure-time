@@ -1,8 +1,7 @@
 "use strict";
 
 $(function(){
-    var header = $(".aui-page-header-main");
-    if (!header.length) {
+    if (!$(".aui-page-header-main").length) {
         return;
     }
 
@@ -59,49 +58,63 @@ $(function(){
         }
     };
 
-    $("head").append(
-        "<style>" +
-        ".jmt-label { padding-right: 1em; }" +
-        ".jmt-start { color: green; }" +
-        ".jmt-stop { color: red; }" +
-        ".jmt-duration { padding: 0 1em; }" +
-        "</style>"
-    );
+    function initStyles() {
+        $("head").append(
+            "<style>" +
+            ".jmt-label { padding-right: 1em; }" +
+            ".jmt-start { color: green; }" +
+            ".jmt-stop { color: red; }" +
+            ".jmt-duration { padding: 0 1em; }" +
+            "</style>"
+        );
+    }
 
+    var startBtn;
+    var stopBtn;
+    var resetBtn;
+    var durationLabel;
     var timeTracker = new TimeTracker(extractIssueNr(document.location.href));
 
-    var startBtn = $("<button class='jmt-start'>Start</button>");
-    startBtn.on("click", function(){
-        timeTracker.start();
+    function initUI() {
+        var header = $(".aui-page-header-main");
+
+        startBtn = $("<button class='jmt-start'>Start</button>");
+        startBtn.on("click", function(){
+            timeTracker.start();
+            updateButtonsVisibility();
+        });
+
+        stopBtn = $("<button class='jmt-stop'>Stop</button>");
+        stopBtn.on("click", function(){
+            timeTracker.stop();
+            updateButtonsVisibility();
+            displayDuration(timeTracker.getDuration());
+        });
+
+        resetBtn = $("<button class='jmt-reset'>x</button>");
+        resetBtn.on("click", function(){
+            timeTracker.reset();
+            updateButtonsVisibility();
+            displayDuration(timeTracker.getDuration());
+        });
+
+        durationLabel = $("<span class='jmt-duration'></span>");
+        displayDuration(timeTracker.getRunningDuration());
+
         updateButtonsVisibility();
-    });
 
-    var stopBtn = $("<button class='jmt-stop'>Stop</button>");
-    stopBtn.on("click", function(){
-        timeTracker.stop();
-        updateButtonsVisibility();
-        displayDuration(timeTracker.getDuration());
-    });
+        header.append("<span class='jmt-label'>Time tracking:</span>");
+        header.append(startBtn);
+        header.append(stopBtn);
+        header.append(durationLabel);
+        header.append(resetBtn);
+    }
 
-    var resetBtn = $("<button class='jmt-reset'>x</button>");
-    resetBtn.on("click", function(){
-        timeTracker.reset();
-        updateButtonsVisibility();
-        displayDuration(timeTracker.getDuration());
-    });
-
-    var durationLabel = $("<span class='jmt-duration'></span>");
-    displayDuration(timeTracker.getRunningDuration());
-
-    updateButtonsVisibility();
-
-    header.append("<span class='jmt-label'>Time tracking:</span>");
-    header.append(startBtn);
-    header.append(stopBtn);
-    header.append(durationLabel);
-    header.append(resetBtn);
+    initStyles();
+    initUI();
 
     setInterval(function(){
+        ensureContainerPresent();
         if (timeTracker.isRunning()) {
             displayDuration(timeTracker.getRunningDuration());
         }
@@ -121,6 +134,12 @@ $(function(){
     function extractIssueNr(url) {
         var matches = url.match(/browse\/([\w\d-]+)/);
         return matches[1];
+    }
+
+    function ensureContainerPresent() {
+        if ($(".jmt-duration").length === 0) {
+            initUI();
+        }
     }
 
     function displayDuration(ms) {
